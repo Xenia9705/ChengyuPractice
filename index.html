@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>數字成語練習</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap">
+<style>
+/* Layout: one narrow column, phone first. Tabs pick the drill, a thin progress rule sits under them,
+   and every number character inside an idiom is tinted so the counting pattern is visible. */
+:root {
+  --bg: #edf0f3;
+  --surface: #ffffff;
+  --ink: #16202a;
+  --muted: #5b6875;
+  --line: #d3dae1;
+  --accent: #2b4a7e;
+  --accent-ink: #ffffff;
+  --sel: #e1e8f4;
+  --ok: #1d7a57;
+  --ok-bg: #dcf0e6;
+  --bad: #b03a2e;
+  --bad-bg: #f8e1dd;
+  --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161c; --surface: #1a222b; --ink: #e6ecf2; --muted: #94a2b0; --line: #2c3743;
+    --accent: #8fb0ea; --accent-ink: #0f1722; --sel: #223049;
+    --ok: #5fd0a0; --ok-bg: #17382c; --bad: #f0877a; --bad-bg: #3f211d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161c; --surface: #1a222b; --ink: #e6ecf2; --muted: #94a2b0; --line: #2c3743;
+  --accent: #8fb0ea; --accent-ink: #0f1722; --sel: #223049;
+  --ok: #5fd0a0; --ok-bg: #17382c; --bad: #f0877a; --bad-bg: #3f211d;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.6;
+}
+.wrap {
+  max-width: 640px; margin: 0 auto; padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header h1 { font-family: var(--serif); font-size: 1.7rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+.tabs { display: flex; gap: 4px; margin-top: 18px; border-bottom: 1px solid var(--line); }
+.tab {
+  flex: 1; min-height: 46px; background: none; border: 0; border-bottom: 3px solid transparent;
+  color: var(--muted); font: inherit; font-weight: 500; cursor: pointer; padding: 6px 4px;
+}
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+.bar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 14px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s; }
+.tools { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 14px; color: var(--muted); font-size: 0.88rem; gap: 12px; }
+.tools label { display: flex; align-items: center; gap: 6px; cursor: pointer; min-height: 32px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+.kicker { margin: 0 0 6px; color: var(--muted); font-size: 0.88rem; letter-spacing: .08em; }
+.idiom { font-family: var(--serif); font-size: 2.2rem; line-height: 1.25; margin: 4px 0 2px; text-wrap: balance; }
+.py { color: var(--muted); font-size: 0.95rem; margin: 0; font-family: var(--sans); font-weight: 400; }
+b.n { color: var(--accent); font-weight: inherit; }
+.sent { font-size: 1.15rem; line-height: 1.9; margin: 0; }
+.gap { display: inline-block; min-width: 4.2em; border-bottom: 2px solid var(--accent); margin: 0 2px; }
+mark { background: var(--sel); color: var(--ink); padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.opts { display: grid; gap: 10px; margin-bottom: 14px; }
+.opts.two { grid-template-columns: 1fr 1fr; }
+.opt {
+  display: flex; gap: 12px; align-items: center; text-align: left; width: 100%; min-height: 54px;
+  background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px;
+  padding: 10px 14px; font: inherit; cursor: pointer;
+}
+.opts.two .opt { justify-content: center; text-align: center; font-family: var(--serif); font-size: 1.15rem; }
+.opt .k { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: .8rem; color: var(--muted); }
+.opts.two .opt .k { display: none; }
+.opt:hover { border-color: var(--accent); }
+.opt.ok { background: var(--ok-bg); border-color: var(--ok); }
+.opt.bad { background: var(--bad-bg); border-color: var(--bad); }
+.opt.lock { pointer-events: none; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.fb .verdict { margin: 0 0 6px; font-weight: 700; }
+.fb.good .verdict { color: var(--ok); }
+.fb.miss .verdict { color: var(--bad); }
+.fb .big { font-family: var(--serif); font-size: 1.4rem; margin: 0 0 2px; }
+.fb p { margin: 6px 0; }
+.why { color: var(--muted); font-size: 0.95rem; }
+.ex { border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 10px !important; }
+.picked { font-size: .92rem; color: var(--muted); }
+.primary {
+  width: 100%; min-height: 50px; background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 10px;
+  font: inherit; font-weight: 700; cursor: pointer;
+}
+.primary:disabled { opacity: .4; cursor: not-allowed; }
+.ghost {
+  width: 100%; min-height: 50px; background: none; color: var(--accent); border: 1.5px solid var(--accent);
+  border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer;
+}
+.stack { display: grid; gap: 10px; }
+.score { font-family: var(--serif); font-size: 3rem; line-height: 1; margin: 6px 0 2px; }
+.misslist { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 12px; }
+.misslist li { border-top: 1px solid var(--line); padding-top: 10px; }
+.misslist strong { font-family: var(--serif); font-size: 1.15rem; }
+.hint { color: var(--muted); font-size: .92rem; margin: 0 0 12px; }
+.psent { padding: 14px 0; border-top: 1px solid var(--line); }
+.psent:first-of-type { border-top: 0; padding-top: 4px; }
+.slot {
+  display: inline-block; min-width: 5.2em; min-height: 36px; vertical-align: baseline; margin: 0 2px;
+  padding: 0 8px; background: none; color: var(--ink); font-family: var(--serif); font-size: 1.05rem; line-height: 1.7;
+  border: 0; border-bottom: 2px solid var(--accent); cursor: pointer; border-radius: 4px 4px 0 0;
+}
+.slot.filled { background: var(--sel); font-weight: 700; }
+.slot.active { background: var(--sel); outline: 2px solid var(--accent); }
+.slot.ok { background: var(--ok-bg); border-bottom-color: var(--ok); }
+.slot.bad { background: var(--bad-bg); border-bottom-color: var(--bad); }
+.rf { margin: 8px 0 0; font-size: .95rem; }
+.rf.ok { color: var(--ok); }
+.rf.bad { color: var(--bad); }
+.tray {
+  position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--line);
+  padding: 10px 0 calc(8px + env(safe-area-inset-bottom, 0px)); margin-top: 8px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.chip {
+  min-height: 42px; padding: 4px 12px; background: var(--surface); color: var(--ink); border: 1.5px solid var(--line);
+  border-radius: 8px; font-family: var(--serif); font-size: 1.05rem; cursor: pointer;
+}
+.chip.sel { border-color: var(--accent); background: var(--sel); }
+.chip.used { opacity: .3; pointer-events: none; }
+.total { color: var(--muted); font-size: .9rem; margin: 0 0 8px; }
+@media (max-width: 420px) { .opts.two { grid-template-columns: 1fr 1fr; } .idiom { font-size: 1.9rem; } }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>數字成語練習</h1>
+    <p>49 個學過的數字成語，依臺灣用法出題</p>
+  </header>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-meaning" aria-selected="true" data-mode="meaning">1 意思選擇</button>
+    <button class="tab" role="tab" id="tab-usage" aria-selected="false" data-mode="usage">2 用法選擇</button>
+    <button class="tab" role="tab" id="tab-paste" aria-selected="false" data-mode="paste">3 貼單字</button>
+  </div>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+  <div class="tools">
+    <span id="status"></span>
+    <label for="pytog"><input type="checkbox" id="pytog" checked> 顯示拼音</label>
+  </div>
+  <main id="stage" aria-live="polite"></main>
+</div>
+
+<script>
+/* [成語, 拼音, 群組, 意思, 句子一(選擇題), 句子二(貼單字), 用法提醒, 干擾選項] */
+const ROWS = [
+['一見鍾情','yí jiàn zhōng qíng','g3','第一次見面就愛上對方','他一看到她就心動，這就是傳說中的{}。','他們在咖啡廳對上眼的那一刻就{}了，後來真的結了婚。','用在兩個人之間的愛情。對比一見如故：只是投緣，不一定是愛情。',['一見如故','一日三秋','六親不認']],
+['一見如故','yí jiàn rú gù','g3','初次見面就像老朋友一樣投緣','我和新同學只聊了十分鐘，就覺得{}，好像認識很多年了。','兩個陌生人在旅行團裡{}，聊得像認識十年的老朋友。','「如」是好像，「故」是舊（故人）。重點是投緣，不限於愛情。',['一見鍾情','百聞不如一見','一呼百應']],
+['百聞不如一見','bǎi wén bù rú yí jiàn','g3','聽別人說很多次，不如自己親眼看一次','照片上的雪山已經很美了，親自站在山腳下才知道什麼是{}。','網路上的介紹再詳細，也比不上親自走一趟，真是{}。','「聞」是聽說。親眼看到才真正明白時使用。',['一見如故','千言萬語','一日三秋']],
+['三顧茅廬','sān gù máo lú','g12','誠心誠意地一再邀請有才能的人','這家公司{}，終於把那位資深工程師請來擔任技術長。','校長{}，才請到那位退休的名教授來學校任教。','只用在人身上，對象是長輩、師長或有成就的人。典故：劉備三次拜訪諸葛亮。',['孟母三遷','一言九鼎','一呼百應']],
+['一箭雙鵰','yí jiàn shuāng diāo','g4','做一件事，同時達到兩個目標','週末去當志工，既幫助了別人，又認識了新朋友，真是{}。','這個手機遊戲既能打發時間又能練英文，簡直是{}。','成語典：一箭雙鵰側重「達到兩個目標」；一舉兩得側重「得到兩種好處」。',['五花八門','九牛一毛','一步登天']],
+['孟母三遷','mèng mǔ sān qiān','g15','父母為了孩子的教育，慎選居住環境','為了讓孩子有好的學習環境，他們特地搬到學區附近，真像現代的{}。','很多家長為了孩子的教育搬家，就像古時候的{}。','典故：孟子的母親為了給孩子好環境，搬了三次家。',['三顧茅廬','丟三落四','說三道四']],
+['顛三倒四','diān sān dǎo sì','g2','說話或做事混亂，沒有條理','他緊張得講話{}，大家聽了半天還是不知道重點。','他睡眠不足，說話{}，一句話前後都對不上。','形容混亂沒條理。和丟三落四（健忘）不同。',['丟三落四','說三道四','千言萬語']],
+['五花八門','wǔ huā bā mén','g1','種類繁多，各式各樣','夜市裡的小吃{}，從臭豆腐到珍珠奶茶應有盡有。','這間書店的書種類{}，從漫畫到科學雜誌都有。','形容種類多。反義：千篇一律。',['千篇一律','一成不變','一乾二淨']],
+['六神無主','liù shén wú zhǔ','g5','慌張得不知道該怎麼辦','聽到爸爸突然住院的消息，她嚇得{}，連鑰匙都忘了拿。','看到孩子突然不見了，媽媽急得{}，不知道該怎麼辦。','多因突然的壞消息而慌亂。對比七上八下：後者是心跳不安、擔心結果。',['七竅生煙','三長兩短','顛三倒四']],
+['七竅生煙','qī qiào shēng yān','g7','氣到極點（只用在人身上）','他發現同事偷用了他的點子，氣得{}。','他聽到別人亂傳他的謠言，氣得{}。','「生」讀 shēng。七竅是眼、耳、鼻各兩個加上嘴巴，說的對象是人。',['七上八下','六神無主','九死一生']],
+['七上八下','qī shàng bā xià','g5','心裡緊張、擔心，靜不下來','成績明天才公布，我今晚心裡{}，怎麼也睡不著。','面試前一晚，他的心裡{}，一直想著明天會不會被問倒。','像十五個吊桶打水，上上下下不停。多用在等待結果時。',['七竅生煙','七手八腳','一日三秋']],
+['半斤八兩','bàn jīn bā liǎng','g6','雙方程度差不多（多半都不好）','這兩家餐廳都不好吃，比來比去也是{}。','這兩位候選人的政見都很空洞，比起來也是{}。','一斤等於十六兩，所以半斤就是八兩。通常指兩邊一樣不好。',['十全十美','一言九鼎','九牛一毛']],
+['一言九鼎','yì yán jiǔ dǐng','g12','說話分量重，一定守信用','老闆是{}的人，只要他答應過的事，從來沒有反悔。','他在鄉里很有信用，說出口的話{}，大家都信服。','「鼎」是古代很重的銅器。形容說話可靠、有分量。',['三顧茅廬','一呼百應','十全十美']],
+['九牛二虎之力','jiǔ niú èr hǔ zhī lì','g8','非常大的力氣；費盡全力','我們費了{}，才把那顆大石頭推到路邊。','為了說服爸爸，我費了{}，他才終於點頭。','常說「費了九牛二虎之力」。和九牛一毛不同。',['九牛一毛','一步登天','五花八門']],
+['十全十美','shí quán shí měi','g10','完美，沒有任何缺點','世界上沒有{}的人，每個人都有優點和缺點。','這份計畫書看起來幾乎{}，找不到任何缺點。','常用否定句：沒有十全十美的人。',['八面玲瓏','一成不變','半斤八兩']],
+['一日三秋','yí rì sān qiū','g15','一天不見就像隔了很久，形容非常想念','男朋友出國交換一個學期，她每天都想他，真是{}。','他們談遠距離戀愛，一天沒見面就覺得{}。','「三秋」是三年。一天不見像隔了三年。',['一生一世','一見鍾情','一刀兩斷']],
+['八面玲瓏','bā miàn líng lóng','g12','處事圓融，和各方面都相處得好','他在公司{}，不管跟哪個部門的人都處得很好，從來不得罪人。','這位業務員{}，客戶和同事都喜歡他。','成語典：側重手腕圓融，略含貶義。',['十全十美','一呼百應','六親不認']],
+['一呼百應','yì hū bǎi yìng','g12','一個人一號召，很多人馬上響應','他一發出號召，立刻有上百人響應，真是{}。','他在社團很有威望，只要一說要辦活動就{}。','「百」是很多。指一個人的號召力。',['一言九鼎','三顧茅廬','八面玲瓏']],
+['一步登天','yí bù dēng tiān','g13','一下子就達到很高的地位或成就','學語言沒有捷徑，不可能{}，要每天累積。','他想不用努力就當上總經理，簡直是想{}。','多用在「不可能一步登天」這類提醒。反義：循序漸進、一步一腳印。',['一步一腳印','一成不變','一乾二淨']],
+['一步一腳印','yí bù yì jiǎoyìn','g13','做事踏實，一步一步穩穩前進','他不貪快，做事總是{}，所以基礎特別紮實。','她學鋼琴從不偷懶，{}地練習，三年後終於考上音樂系。','形容踏實穩健。和一步登天相反。',['一步登天','一波三折','一成不變']],
+['千變萬化','qiān biàn wàn huà','g1','變化非常多','山區的天氣{}，早上晴天，下午可能就下大雨。','萬花筒轉一下就有新圖案，真是{}。','千、萬都是「很多」。反義：一成不變、千篇一律。',['一成不變','千篇一律','五顏六色']],
+['一乾二淨','yì gān èr jìng','g17','一點也不剩，完全沒有留下','弟弟把桌上的蛋糕吃得{}，連一口都沒留給我。','颱風過後，這條街被洪水沖得{}，什麼都沒留下。','口語連讀 yì gān èr jìng。',['一刀兩斷','一呼百應','九牛一毛']],
+['一波三折','yì bō sān zhé','g16','事情不順利，一再出現曲折','這份合約談了半年，過程{}，最後才順利簽約。','辦簽證時先是資料缺漏，接著又遇到系統當機，過程{}。','「波」本來是書法的一筆，轉折三次。比喻事情曲折。',['一步登天','三長兩短','七手八腳']],
+['說三道四','shuō sān dào sì','g14','隨便批評、議論別人','別人家的事，我們不該隨便{}。','她默默做好自己的工作，不理會別人的{}。','帶貶義，多針對別人的事。',['丟三落四','顛三倒四','三長兩短']],
+['七手八腳','qī shǒu bā jiǎo','g2','人多手雜，動作忙亂沒有條理','廚房突然起火，大家{}地搬水來滅火，場面一團亂。','搬家那天，朋友們{}地幫忙，很快就把家具都搬好了。','重點是「人多」。對比手忙腳亂：不限人數，重在慌張。',['七上八下','五花八門','八面玲瓏']],
+['百發百中','bǎi fā bǎi zhòng','g10','每次都命中目標，形容技術很準','他投三分球{}，是球隊的王牌。','那位射箭選手每一箭都正中紅心，簡直是{}。','形容技術準。萬無一失則是準備周全、有把握。',['萬無一失','一箭雙鵰','九死一生']],
+['五彩繽紛','wǔ cǎi bīn fēn','g1','色彩鮮豔又好看','花園裡盛開著{}的花朵，像一幅畫。','煙火在夜空綻放，{}的光芒照亮了河面。','形容色彩鮮豔絢麗。',['千篇一律','千變萬化','一乾二淨']],
+['九死一生','jiǔ sǐ yì shēng','g11','經歷極大危險，僥倖活下來','他在山上遇到土石流，{}地逃了出來。','那場車禍很嚴重，他{}，在加護病房待了一個月才脫離危險。','口語連讀 jiǔ sǐ yì shēng。',['三長兩短','一生一世','十全十美']],
+['一生一世','yì shēng yí shì','g15','一輩子','他在婚禮上承諾，要和她在一起{}。','這對老夫妻說，他們要{}不分開。','成語典把它標為「詞語」，意思是一輩子。',['一日三秋','一刀兩斷','萬眾一心']],
+['丟三落四','diū sān là sì','g2','健忘，老是忘東忘西','弟弟總是{}，今天又把水壺忘在學校了。','他一出門就{}，不是忘了帶錢包，就是忘了帶手機。','「落」讀 là，是遺漏、忘了帶。',['顛三倒四','說三道四','孟母三遷']],
+['萬眾一心','wàn zhòng yì xīn','g12','所有人團結一條心','面對颱風災情，全市居民{}，一起清理街道。','球隊進入決賽，全校師生{}，在場邊為他們加油。','「萬眾」是很多人。多用於全國、全校等團體。',['千篇一律','一毛不拔','八面玲瓏']],
+['三長兩短','sān cháng liǎng duǎn','g11','意外的變故（多指意外死亡的委婉說法）','她一個人去爬山，家人很擔心，怕萬一有個{}。','老人家獨自住在山上，鄰居都擔心他萬一有個{}。','「長」讀 cháng。常用句型：萬一有個三長兩短。',['九死一生','一波三折','顛三倒四']],
+['萬無一失','wàn wú yì shī','g10','絕對不會出差錯，非常有把握','這次活動的流程我們檢查了三遍，應該是{}了。','出國前他把護照、機票都檢查了好幾次，確保{}。','一萬次沒有一次失誤。常說「確保萬無一失」。',['百發百中','一成不變','一乾二淨']],
+['千篇一律','qiān piān yí lǜ','g1','形式呆板，每一個都一樣','這幾部電影的劇情{}，看完第一部就知道後面怎麼演。','每個學生交上來的作文都{}，開頭結尾幾乎一模一樣。','通常是批評，指沒有新意。反義：千變萬化、五花八門。',['五花八門','千變萬化','十全十美']],
+['一成不變','yì chéng bú biàn','g1','一旦定了就不改變，老樣子','他每天的生活{}，七點起床，九點上班，十二點吃同一家便當。','他喜歡冒險，受不了{}的生活。','「不」在第四聲前讀 bú。反義：千變萬化。',['千變萬化','一波三折','一步登天']],
+['火冒三丈','huǒ mào sān zhàng','g7','非常生氣，怒氣沖天','他發現新買的手機被摔壞了，氣得{}。','老闆看到報表上的錯誤，頓時{}，把大家叫進辦公室。','口語常用。「怒火冒出三丈高」。',['一毛不拔','七上八下','六神無主']],
+['五十步笑百步','wǔ shí bù xiào bǎi bù','g6','自己有同樣的缺點，卻還嘲笑別人','你自己也考了六十分，還笑他考五十八分，這不是{}嗎？','你自己也常常遲到，還笑別人，真是{}。','出自《孟子》。一定有「嘲笑」的動作，這是和半斤八兩的差別。',['說三道四','一毛不拔','一成不變']],
+['十年寒窗','shí nián hán chuāng','g8','長年在艱苦環境中辛苦讀書','古時候的讀書人為了參加科舉，{}，日夜苦讀，才有機會當官。','他{}，終於通過了高普考。','形容長年苦讀，語氣正面。',['百口莫辯','百思不解','十全十美']],
+['百口莫辯','bǎi kǒu mò biàn','g14','被冤枉卻怎麼也說不清楚','錢包在他的背包裡被找到，他{}，沒辦法證明自己是清白的。','監視器畫面對他很不利，他{}，只能等警方調查。','就算有一百張嘴也解釋不清。',['百思不解','百聞不如一見','千言萬語']],
+['百思不解','bǎi sī bù jiě','g14','怎麼想都想不通','這麼簡單的題目他竟然答錯，真令人{}。','明明關了燈，房間卻亮著，我{}。','常用「令人百思不解」。「百思」是想很多次。',['百口莫辯','千言萬語','一波三折']],
+['千言萬語','qiān yán wàn yǔ','g14','想說的話非常多','畢業典禮上，同學們看著老師，心裡有{}，卻說不出口。','看到失散多年的哥哥，她心中有{}，眼淚卻先掉了下來。','形容想說的話很多，語氣正面。',['一言九鼎','百口莫辯','說三道四']],
+['千辛萬苦','qiān xīn wàn kǔ','g8','非常辛苦，遇到很多困難','他們歷經{}，終於從無人島回到家鄉。','這家人{}地翻山越嶺，才逃到安全的地方。','常說「歷經／受了千辛萬苦」。',['十年寒窗','千言萬語','百口莫辯']],
+['九牛一毛','jiǔ niú yì máo','g8','極大數量中很小的一部分，微不足道','這點錢對他來說只是{}，他一點都不在乎。','政府的預算有好幾億，這筆錢只是{}。','常說「對…來說只是九牛一毛」。和九牛二虎之力意思完全不同。',['九牛二虎之力','一毛不拔','一乾二淨']],
+['一舉兩得','yì jǔ liǎng dé','g4','做一件事，同時得到兩種好處','騎腳踏車上班，既省錢又運動，真是{}。','到國外出差順便探望老朋友，真是{}。','成語典：側重「取得兩種好處」。和一箭雙鵰很像，但後者側重兩個目標。',['一刀兩斷','一波三折','一步登天']],
+['一刀兩斷','yì dāo liǎng duàn','g9','堅決地斷絕關係','他下定決心和以前的壞朋友{}，不再往來。','兩人吵翻後，她把他所有聯絡方式都刪掉，決定{}。','多用在人與人的關係。反義：藕斷絲連。',['六親不認','一生一世','一呼百應']],
+['一毛不拔','yì máo bù bá','g9','非常吝嗇，一點錢也捨不得花','他很有錢，卻{}，朋友聚餐從來不肯付錢。','這個鐵公雞向來{}，捐款名單上永遠沒有他的名字。','貶義，用來形容吝嗇的人。',['八面玲瓏','九牛一毛','六親不認']],
+['亂七八糟','luàn qī bā zāo','g2','毫無條理，非常雜亂','他的房間{}，什麼東西都找不到。','院子被颱風吹得{}，到處是落葉和樹枝。','口語常用，可形容房間、思緒、事情。',['五花八門','七手八腳','顛三倒四']],
+['五顏六色','wǔ yán liù sè','g1','顏色繁多；也指各式各樣','孩子房間裡堆滿了{}的積木。','市集的攤位掛著{}的燈籠，十分熱鬧。','國語辭典：①色彩繁多 ②各式各樣。',['一乾二淨','千篇一律','一成不變']],
+['六親不認','liù qīn bú rèn','g9','對親人也不講情義；也指執法不徇私','他一有錢就變得{}，連親弟弟開口借錢都不肯。','那位法官辦案{}，就算是親戚來說情也不給面子。','貶義是無情；也能褒義，指不徇私。「不」在第四聲前讀 bú。',['八面玲瓏','一言九鼎','一刀兩斷']]
+];
+const D = ROWS.map(r => ({ w:r[0], p:r[1], g:r[2], m:r[3], s:r[4], t:r[5], why:r[6], d:r[7] }));
+const BY = Object.fromEntries(D.map(x => [x.w, x]));
+
+const NUM = /[一二三四五六七八九十百千萬兩半]/g;
+const fm = w => w.replace(NUM, c => '<b class="n">' + c + '</b>');
+const fill = (s, w) => s.replace('{}', '<mark>' + fm(w) + '</mark>');
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const sample = (a, n) => shuffle(a).slice(0, n);
+
+const stage = document.getElementById('stage');
+const barEl = document.getElementById('bar');
+const statusEl = document.getElementById('status');
+const pyTog = document.getElementById('pytog');
+let mode = 'meaning', showPy = true, S = null, P = null;
+const N = 10;
+
+pyTog.addEventListener('change', () => { showPy = pyTog.checked; if (S && S.kind === 'meaning' && !S.done) renderQuestion(S.answered); });
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.mode === m)));
+  if (m === 'paste') { P = { total: 0, right: 0 }; newRound(); } else startSession(m);
+}
+
+function startSession(m, pool) {
+  const items = shuffle(pool && pool.length ? pool : sample(D, N));
+  S = { kind: m, items, i: 0, right: 0, miss: [], answered: false, done: false, opts: [] };
+  renderQuestion(false);
+}
+
+function setProgress(done, total, text) {
+  barEl.style.width = (total ? (done / total * 100) : 0) + '%';
+  statusEl.textContent = text;
+}
+
+function renderQuestion(keepAnswered) {
+  const it = S.items[S.i];
+  if (!keepAnswered) {
+    S.answered = false;
+    if (S.kind === 'meaning') S.opts = shuffle([{ t: it.m, c: true, w: it.w }].concat(it.d.map(w => ({ t: BY[w].m, c: false, w: w }))));
+    else S.opts = shuffle([it.w].concat(it.d)).map(w => ({ t: w, c: w === it.w, w: w }));
+  }
+  setProgress(S.i, S.items.length, '第 ' + (S.i + 1) + ' 題 / 共 ' + S.items.length + ' 題');
+  let head;
+  if (S.kind === 'meaning') {
+    head = '<section class="card"><p class="kicker">這個成語的意思是？</p><h2 class="idiom">' + fm(it.w) + '</h2>' +
+      (showPy ? '<p class="py">' + it.p + '</p>' : '') + '</section>';
+  } else {
+    head = '<section class="card"><p class="kicker">選出最適合填入空格的成語</p><p class="sent">' +
+      it.s.replace('{}', '<span class="gap"></span>') + '</p></section>';
+  }
+  const two = S.kind === 'usage' ? ' two' : '';
+  const opts = S.opts.map((o, k) =>
+    '<button class="opt" data-act="opt" data-v="' + k + '"><span class="k">' + 'ABCD'[k] + '</span><span>' +
+    (S.kind === 'usage' ? fm(o.t) : o.t) + '</span></button>').join('');
+  stage.innerHTML = head + '<div class="opts' + two + '" id="opts">' + opts + '</div><div id="fb"></div>';
+  if (keepAnswered && S.answered) markAnswer(S.pick);
+}
+
+function markAnswer(k) {
+  const btns = stage.querySelectorAll('.opt');
+  btns.forEach((b, j) => {
+    b.classList.add('lock');
+    if (S.opts[j].c) b.classList.add('ok'); else if (j === k) b.classList.add('bad');
+  });
+  const it = S.items[S.i], ok = S.opts[k].c;
+  let picked = '';
+  if (!ok) {
+    const o = S.opts[k];
+    picked = S.kind === 'meaning'
+      ? '<p class="picked">你選的意思屬於：' + fm(o.w) + '（' + BY[o.w].p + '）</p>'
+      : '<p class="picked">你選的「' + fm(o.w) + '」是：' + BY[o.w].m + '</p>';
+  }
+  const last = S.i === S.items.length - 1;
+  document.getElementById('fb').innerHTML =
+    '<section class="card fb ' + (ok ? 'good' : 'miss') + '"><p class="verdict">' + (ok ? '答對了' : '答錯了') + '</p>' +
+    '<p class="big">' + fm(it.w) + ' <span class="py">' + it.p + '</span></p><p>' + it.m + '</p>' + picked +
+    '<p class="why">' + it.why + '</p><p class="ex">' + fill(it.s, it.w) + '</p></section>' +
+    '<button class="primary" data-act="next">' + (last ? '看結果' : '下一題') + '</button>';
+  document.getElementById('fb').scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+}
+
+function answerOpt(k) {
+  if (S.answered) return;
+  S.answered = true; S.pick = k;
+  const it = S.items[S.i];
+  if (S.opts[k].c) S.right++; else S.miss.push(it);
+  markAnswer(k);
+}
+
+function nextQ() {
+  if (S.i < S.items.length - 1) { S.i++; renderQuestion(false); window.scrollTo(0, 0); }
+  else showResult();
+}
+
+function showResult() {
+  S.done = true;
+  const n = S.items.length;
+  setProgress(n, n, '完成');
+  const miss = S.miss.map(it =>
+    '<li><strong>' + fm(it.w) + '</strong> <span class="py">' + it.p + '</span><br>' + it.m + '<br><span class="why">' + it.why + '</span></li>').join('');
+  stage.innerHTML =
+    '<section class="card"><p class="kicker">本回結果</p><p class="score">' + S.right + ' / ' + n + '</p>' +
+    (S.miss.length ? '<p>需要再看一次的成語：</p><ul class="misslist">' + miss + '</ul>' : '<p>全部答對。</p>') + '</section>' +
+    '<div class="stack"><button class="primary" data-act="again">再練一回（新的 10 題）</button>' +
+    (S.miss.length ? '<button class="ghost" data-act="redo">只練答錯的</button>' : '') + '</div>';
+  window.scrollTo(0, 0);
+}
+
+/* ---- Mode 3: paste words into blanks ---- */
+function newRound() {
+  const used = new Set(), picks = [];
+  for (const it of shuffle(D)) {
+    if (!used.has(it.g)) { used.add(it.g); picks.push(it); }
+    if (picks.length === 6) break;
+  }
+  const items = shuffle(picks);
+  P = { total: P.total, right: P.right, items, bank: shuffle(picks.map(x => x.w)), slots: Array(6).fill(null), sel: null, slotSel: null, checked: false };
+  renderPaste();
+  window.scrollTo(0, 0);
+}
+
+function renderPaste() {
+  setProgress(P.slots.filter(Boolean).length, 6, '已填 ' + P.slots.filter(Boolean).length + ' / 6');
+  const sents = P.items.map((it, i) => {
+    const w = P.slots[i];
+    const cls = 'slot' + (w ? ' filled' : '') + (P.slotSel === i ? ' active' : '') + (P.checked ? (w === it.w ? ' ok' : ' bad') : '');
+    const slot = '<button class="' + cls + '" data-act="slot" data-v="' + i + '">' + (w ? fm(w) : '&emsp;&emsp;&emsp;') + '</button>';
+    let fb = '';
+    if (P.checked) {
+      fb = w === it.w
+        ? '<p class="rf ok">答對了　' + it.m + '</p>'
+        : '<p class="rf bad">正確答案：' + fm(it.w) + '（' + it.p + '）　' + it.m + '</p>';
+      fb += '<p class="why">' + it.why + '</p>';
+    }
+    return '<div class="psent"><p class="sent">' + it.t.replace('{}', slot) + '</p>' + fb + '</div>';
+  }).join('');
+  const placed = new Set(P.slots.filter(Boolean));
+  let tray;
+  if (!P.checked) {
+    const chips = P.bank.map(w => '<button class="chip' + (placed.has(w) ? ' used' : '') + (P.sel === w ? ' sel' : '') + '" data-act="chip" data-v="' + w + '">' + fm(w) + '</button>').join('');
+    tray = '<div class="tray"><div class="chips">' + chips + '</div><button class="primary" data-act="check"' + (P.slots.every(Boolean) ? '' : ' disabled') + '>檢查答案</button></div>';
+  } else {
+    const r = P.slots.filter((w, i) => w === P.items[i].w).length;
+    tray = '<div class="tray"><p class="total">本回 ' + r + ' / 6　累計 ' + P.right + ' / ' + P.total + '</p><button class="primary" data-act="newround">下一回合</button></div>';
+  }
+  stage.innerHTML = '<p class="hint">點下方的成語，再點句子裡的空格。點已填的空格可以取消。</p><section class="card">' + sents + '</section>' + tray;
+}
+
+function place(w, idx) {
+  const old = P.slots.indexOf(w);
+  if (old >= 0) P.slots[old] = null;
+  P.slots[idx] = w; P.sel = null; P.slotSel = null;
+  renderPaste();
+}
+function tapChip(w) {
+  if (P.checked) return;
+  if (P.slotSel !== null && !P.slots[P.slotSel]) place(w, P.slotSel);
+  else { P.sel = P.sel === w ? null : w; renderPaste(); }
+}
+function tapSlot(i) {
+  if (P.checked) return;
+  if (P.slots[i]) { P.slots[i] = null; P.slotSel = null; renderPaste(); }
+  else if (P.sel) place(P.sel, i);
+  else { P.slotSel = P.slotSel === i ? null : i; renderPaste(); }
+}
+function checkRound() {
+  if (!P.slots.every(Boolean)) return;
+  P.checked = true;
+  P.total += 6;
+  P.right += P.slots.filter((w, i) => w === P.items[i].w).length;
+  renderPaste();
+}
+
+stage.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const a = b.dataset.act, v = b.dataset.v;
+  if (a === 'opt') answerOpt(+v);
+  else if (a === 'next') nextQ();
+  else if (a === 'again') startSession(mode);
+  else if (a === 'redo') startSession(mode, S.miss.slice());
+  else if (a === 'chip') tapChip(v);
+  else if (a === 'slot') tapSlot(+v);
+  else if (a === 'check') checkRound();
+  else if (a === 'newround') newRound();
+});
+
+setMode('meaning');
+</script>
+</body>
+</html>
