@@ -44,12 +44,47 @@ body {
   background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.6;
 }
 .wrap {
-  max-width: 640px; margin: 0 auto; padding-block: 20px 48px;
+  max-width: 640px; margin: 0 auto; padding-block: 8px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-header h1 { font-family: var(--serif); font-size: 1.7rem; line-height: 1.2; margin: 0; text-wrap: balance; }
-header p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 8px; }
+.topbar h1 { font-family: var(--serif); font-size: 1.15rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+.sub { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.menubtn {
+  display: flex; align-items: center; gap: 8px; flex: none; min-height: 48px; padding: 4px 10px 4px 12px;
+  background: var(--surface); color: var(--ink); border: 1.5px solid var(--accent); border-radius: 10px;
+  font: inherit; cursor: pointer; text-align: left;
+}
+.menubtn svg { flex: none; color: var(--accent); }
+.mtext { display: grid; line-height: 1.2; font-size: .92rem; font-weight: 700; }
+.mtext small { font-weight: 400; color: var(--muted); font-size: .68rem; }
+.mcount { background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 1px 8px; font-size: .78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+[hidden] { display: none !important; }
+.scrim { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.5); display: flex; justify-content: flex-end; }
+.panel { width: min(520px, 100%); height: 100%; background: var(--bg); border-left: 1px solid var(--line); display: flex; flex-direction: column; }
+.phead { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; background: var(--surface); border-bottom: 1px solid var(--line);
+  padding: calc(12px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 12px 16px; }
+.phead h2 { font-family: var(--serif); font-size: 1.3rem; margin: 0; line-height: 1.25; }
+.en { margin: 0; color: var(--muted); font-size: .85rem; }
+.x { flex: none; width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 1.5px solid var(--line); border-radius: 10px; color: var(--ink); cursor: pointer; }
+.pbody { flex: 1; min-height: 0; overflow-y: auto; padding: 14px max(16px, env(safe-area-inset-right, 0px)) 14px 16px; }
+.expl { margin: 0 0 8px; }
+.expl2 { margin: 0 0 14px; color: var(--muted); font-size: .92rem; }
+.pbar { display: grid; gap: 8px; margin-bottom: 12px; }
+#msum { font-variant-numeric: tabular-nums; }
+.pactions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pactions button { min-height: 40px; padding: 4px 14px; background: var(--surface); color: var(--accent); border: 1.5px solid var(--line); border-radius: 8px; font: inherit; font-weight: 500; cursor: pointer; }
+.cklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.ck { display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 6px 10px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer; min-width: 0; }
+.ck.on { border-color: var(--accent); background: var(--sel); }
+.ck input { flex: none; width: 22px; height: 22px; accent-color: var(--accent); cursor: pointer; }
+.ckb { display: grid; min-width: 0; }
+.ckw { font-family: var(--serif); font-size: 1.05rem; line-height: 1.3; }
+.ck:not(.on) .ckw { color: var(--muted); }
+.ckp { color: var(--muted); font-size: .78rem; }
+.pfoot { background: var(--surface); border-top: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) 16px; }
 .tabs { display: flex; gap: 4px; margin-top: 18px; border-bottom: 1px solid var(--line); }
 .tab {
   flex: 1; min-height: 46px; background: none; border: 0; border-bottom: 3px solid transparent;
@@ -136,19 +171,28 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .total { color: var(--muted); font-size: .9rem; margin: 0 0 8px; }
 @media (max-width: 420px) { .opts.two { grid-template-columns: 1fr 1fr; } .idiom { font-size: 1.9rem; } }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+.dlg { margin: 4px 0 0; }
+.dlg .line { display: flex; gap: 10px; margin: 0 0 10px; line-height: 1.7; font-size: 1.05rem; }
+.dlg .who { flex: none; min-width: 3.2em; color: var(--muted, #6b6b6b); font-weight: 600; }
 </style>
 </head>
 <body>
 
 <div class="wrap">
-  <header>
+  <div class="topbar">
     <h1>數字成語練習</h1>
-    <p>49 個學過的數字成語，每個有 4 到 9 個例句輪流出現</p>
-  </header>
+    <button class="menubtn" id="menubtn" aria-haspopup="dialog" title="Available for testing chengyu">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6l1.5 1.5L7.5 4.5M3.5 12l1.5 1.5 2.5-3M3.5 18l1.5 1.5 2.5-3"/></svg>
+      <span class="mtext">可測驗成語<small>Available for testing</small></span>
+      <span class="mcount" id="menucount">49/49</span>
+    </button>
+  </div>
+  <p class="sub">49 個學過的數字成語，每個有 4 到 9 個例句和 3 段情境對話</p>
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tab-meaning" aria-selected="true" data-mode="meaning">1 意思選擇</button>
     <button class="tab" role="tab" id="tab-usage" aria-selected="false" data-mode="usage">2 用法選擇</button>
     <button class="tab" role="tab" id="tab-paste" aria-selected="false" data-mode="paste">3 貼單字</button>
+    <button class="tab" role="tab" id="tab-dialog" aria-selected="false" data-mode="dialog">4 對話情境</button>
   </div>
   <div class="bar" aria-hidden="true"><i id="bar"></i></div>
   <div class="tools">
@@ -156,6 +200,32 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
     <label for="pytog"><input type="checkbox" id="pytog" checked> 顯示拼音</label>
   </div>
   <main id="stage" aria-live="polite"></main>
+</div>
+
+<div id="menu" class="scrim" hidden>
+  <section class="panel" role="dialog" aria-modal="true" aria-labelledby="menutitle">
+    <div class="phead">
+      <div>
+        <h2 id="menutitle">可測驗成語</h2>
+        <p class="en">Available for testing chengyu</p>
+      </div>
+      <button class="x" id="menuclose" aria-label="Close menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="pbody" id="pbody">
+      <p class="expl">打勾的成語，本回都會出現在測驗中；沒打勾的會被跳過。預設全部打勾，你可以隨時打開或關掉。<br><span class="en">Every chengyu that is ticked ON is available for testing this round. All are ON by default, and you can change them at any time.</span></p>
+      <p class="expl2">系統會先出練習次數最少的成語，讓每個都有機會輪到。如果你關掉了正在做的題目，那一題會自動換成別的成語。</p>
+      <div class="pbar">
+        <b id="msum"></b>
+        <div class="pactions">
+          <button id="mall">全選</button>
+          <button id="mnone">全部取消</button>
+          <button id="mreset">重設練習次數</button>
+        </div>
+      </div>
+      <div class="cklist" id="cklist"></div>
+    </div>
+    <div class="pfoot"><button class="primary" id="mdone">完成</button></div>
+  </section>
 </div>
 
 <script>
@@ -293,6 +363,217 @@ function other(x, cur) {
   return rest[Math.floor(Math.random() * rest.length)];
 }
 
+const DLG = {
+'一見鍾情': [
+'阿傑：你怎麼這麼快就決定要跟她交往？／小凱：我在書展看到她的第一眼，心跳就快得不得了，腦子裡再也裝不下別的事。／阿傑：才第一次見面就愛上她了？',
+'媽媽：你們才認識一天，怎麼就說要結婚？／小美：媽，我在朋友的婚禮上看到他，馬上就知道他是我要找的人。',
+'同事：聽說你太太是在捷運上認識的？／老王：對，她對我笑了一下，我當晚就睡不著，隔天馬上去要電話。'],
+'一見如故': [
+'小林：你跟新來的同事聊得真開心。／小張：是啊，我們第一次說話，卻像認識多年的老朋友，什麼都能聊。',
+'老師：你跟那位交換學生很熟嗎？／學生：今天才第一次見面，可是我們興趣一樣，聊了三個小時都不覺得累，好像早就認識了。',
+'阿明：你們是同學嗎？／小華：不是，昨天在登山社才碰面，但一開口就很投緣，已經約好下週一起去露營。'],
+'百聞不如一見': [
+'朋友：聽說阿里山的日出很美。／小李：我看過很多照片，可是親眼看到雲海升起來，才知道照片根本拍不出那種震撼。',
+'客人：這家店的牛肉麵在網路上評價很高。／老闆：您自己來吃一碗就知道了，聽別人說再多，都不如親自嘗一嘗。',
+'主管：你還沒去過工廠就要寫報告？／新人：我看了很多資料。／主管：資料看再多，也比不上親自到現場走一趟。'],
+'三顧茅廬': [
+'經理：新的技術長你談好了嗎？／副理：他一開始拒絕了，我連續誠心拜訪三次，他終於答應加入我們。',
+'老闆：那位退休的老師傅願意回來指導嗎？／阿豪：我親自登門拜訪好幾次，誠意打動了他，他才點頭。',
+'助理：那位選手已經拒絕您兩次了。／總教練：這種人才很難得，我願意一次又一次誠心邀請，直到他答應為止。'],
+'一箭雙鵰': [
+'老闆：這次展覽的成果怎麼樣？／經理：我們靠這一場活動，同時打響了新品牌，也拿到三家通路的訂單，兩個目標都達成了。',
+'小美：你怎麼把運動跟社交放在一起？／阿宏：我組了一個羽球社，一個計畫就同時鍛鍊了身體，也認識了一群新朋友。',
+'導演：這首主題曲既宣傳了電影，又讓新人歌手一炮而紅。／製片：這個策略真巧，一個點子就解決了兩個難題。'],
+'孟母三遷': [
+'鄰居：你們為什麼又要搬家？／媽媽：現在住的地方太吵，孩子都跟著學壞了，我想搬到學校和圖書館附近，讓他有好的環境。',
+'朋友：你為了讓女兒讀好學校，連房子都換了？／小周：環境會影響孩子，我寧可多花錢搬家，也要讓她遠離壞影響。',
+'小王：你媽為什麼堅持要搬到書店街旁邊？／小李：她說鄰居的習慣會影響我，所以前後搬過三次家，只為了給我最好的成長環境。'],
+'顛三倒四': [
+'醫生：你把事情經過說一遍。／病人：昨天……不對，是前天，我先吃藥……呃，不對，我先去上班……／醫生：你說的前後順序都亂了。',
+'老師：這篇作文我怎麼看不懂？／學生：我太緊張了，寫得前面和後面都接不起來，順序也很混亂。',
+'小趙：他剛剛報告時為什麼一直重講？／小錢：他喝醉了，話講得前後矛盾，一下講到去年，一下又講到明天，沒人聽得懂。'],
+'五花八門': [
+'遊客：夜市裡有什麼好玩的？／朋友：賣的東西什麼都有，小吃、遊戲、衣服、玩具，種類多得數不完。',
+'小張：這次的網購平台，商品怎麼樣？／小林：種類太多了，從手機殼到寵物玩具，什麼類型都有，我都不知道怎麼選。',
+'老師：同學們的興趣有哪些？／班長：有人玩樂高、有人養蜘蛛、有人練書法，每個人的愛好都不一樣。'],
+'六神無主': [
+'護理師：你先坐下，慢慢說。／家屬：醫生說我爸爸突然昏倒了，我不知道該怎麼辦，腦子一片空白。',
+'小美：你怎麼臉色這麼白？／阿凱：我的錢包和護照都不見了，人又在國外，現在完全不知道該做什麼。',
+'老師：考試鐘聲已經響了，你怎麼還在發呆？／學生：我發現考卷少寫了一大半，心裡慌得不知道怎麼辦才好。'],
+'七竅生煙': [
+'同事：你怎麼臉都紅了？／小吳：我辛苦做了三天的報告，被人偷偷改掉還說是他做的，我氣到快要爆炸。',
+'媽媽：弟弟怎麼了？／姊姊：他的新遊戲機被同學故意弄壞，他氣到發抖，整個人跳起來大吼。',
+'老闆：那位客人為什麼投訴？／店員：他買到過期的蛋糕，氣得話都說不完整，一直說要找人理論。'],
+'七上八下': [
+'同學：成績單什麼時候公布？／小雅：明天早上。我現在心跳得好快，一直想著會不會不及格，整晚都睡不著。',
+'爸爸：你怎麼一直在客廳走來走去？／媽媽：醫院說報告今天下午會通知，我擔心結果不好，坐也不是、站也不是。',
+'球迷：比賽剩最後十秒，還落後一分！／朋友：我手心都是汗，不知道最後一球會不會進，緊張得不敢看。'],
+'半斤八兩': [
+'小美：你覺得A餐廳還是B餐廳比較好？／阿翔：我兩家都去過，一樣貴、一樣難吃，選哪家都差不多。',
+'同事甲：我的方案雖然有缺點，但他的也好不到哪裡去。／同事乙：對，你們兩個的企劃都一樣漏洞百出，誰也不比誰強。',
+'哥哥：弟弟的房間很亂。／姊姊：你的房間也沒比他乾淨啊，你們兩個程度差不多。'],
+'一言九鼎': [
+'客戶：合約還沒簽，他就說會全額退款，可靠嗎？／秘書：我們老闆答應過的事，從來沒有食言過，說出口的話就算數。',
+'村民：這件事請村長出面吧。／老人：他說一句話，比白紙黑字的契約還管用，大家都服他。',
+'兒子：爸，你為什麼一定要去參加他的婚禮？／爸爸：我三年前親口答應過，就算下大雨、身體不舒服，說到就要做到。'],
+'九牛二虎之力': [
+'小周：你怎麼滿頭大汗？／阿德：我們三個人拚了命，才把那台冰箱搬上五樓。',
+'老師：這個計畫怎麼終於通過了？／學生：我找了很多資料，反覆說服委員，費盡全部力氣才讓他們點頭。',
+'爸爸：你修好那台舊腳踏車了？／兒子：花了整個下午，用盡所有力氣，才把生鏽的螺絲轉開。'],
+'十全十美': [
+'小梅：你覺得這個計畫還有什麼要改的嗎？／主管：我看了好幾遍，每個細節都很完整，找不到任何缺點。',
+'老師：不要太苛求自己。／學生：我想每一科都考滿分，什麼缺點都不要有。／老師：世界上沒有一個人在所有方面都毫無缺點，學著接受不完美吧。',
+'新娘：婚禮的流程、場地、菜色都沒問題嗎？／婚顧：整場婚禮從頭到尾沒有一點瑕疵，樣樣都做到最好。'],
+'一日三秋': [
+'小玲：你男友出國多久了？／小慧：才三天，可是我覺得像過了三年，每分每秒都在想他。',
+'孫子：爺爺才去外地一個晚上，奶奶就一直看時鐘。／媽媽：因為她太想念他了，覺得時間過得特別慢。',
+'阿凱：你們每天視訊，不會膩嗎？／小安：一天沒看到她，我就覺得像過了好幾年，等不及想見面。'],
+'八面玲瓏': [
+'新人：為什麼每個部門都喜歡阿豪？／前輩：他很會說話，跟誰都處得好，從來不得罪任何人。',
+'客戶：這位業務員真厲害，連最難搞的老闆都被他哄得很開心。／經理：他待人圓滑，各方面都照顧得周到，不管什麼場合都應付自如。',
+'同學：班上有紛爭的時候，他總是兩邊都安撫得好好的。／小莉：對，他跟每個小團體都是朋友，也沒有人討厭他。'],
+'一呼百應': [
+'社長：我在群組裡說週末要淨灘，現在已經有一百多人報名了。／學長：你一發出號召，大家都響應，真有號召力。',
+'記者：這位網紅為什麼影響力這麼大？／粉絲：他只要發一則貼文，馬上就有成千上萬的人跟著做。',
+'隊長：今天有人要去幫忙嗎？／隊員：您一開口，全隊的人立刻都舉手了。'],
+'一步登天': [
+'學生：老師，我想一個月就考過TOCFL C1。／老師：語言要慢慢累積，不可能一下子就達到最高等級。',
+'小弟：我才剛進公司，下個月就要當經理！／前輩：完全不經過任何歷練，就想直接坐到最高的位置，這太不切實際了。',
+'朋友：這個新人才工作兩年就當上副總，真厲害！／同事：他是靠運氣，跳過了所有基層的經驗，一下子就爬到最高層。'],
+'一步一腳印': [
+'老師：你的基礎怎麼這麼穩？／學生：我每天進度不多，但每一課都確實學會，才往下一課走。',
+'創業者：你怎麼不一次開十家分店？／老闆：我一家一家慢慢經營，穩穩前進，不求快速。',
+'爺爺：你的功夫為什麼練得比別人好？／孫子：我不跳級，每個基本動作都踏踏實實練好，才學下一個。'],
+'千變萬化': [
+'旅客：這裡的天氣怎麼這麼難預測？／導遊：山上的雲霧一下散、一下聚，一個小時內就有各種不同的景象。',
+'小朋友：這個萬花筒好好玩！／老師：每轉一下，圖案就不一樣，變化多到數不清。',
+'編舞老師：這場舞蹈的隊形有什麼特色？／舞者：每十秒就換一種隊形，沒有一次重複，變化多得讓觀眾看不完。'],
+'一乾二淨': [
+'媽媽：我留了半鍋湯給你，怎麼空了？／兒子：我們回來肚子好餓，一滴都沒剩，全喝完了。',
+'屋主：小偷來過以後，家裡怎麼樣？／警察：值錢的東西全被拿光了，什麼都沒留下。',
+'老師：昨天教的單字你記得多少？／學生：考完試睡了一覺，全忘光了，腦子裡一個字都不剩。'],
+'一波三折': [
+'同事：你的簽證辦好了嗎？／小孟：先是資料漏了，接著系統當機，後來又被退件，折騰了兩個月才拿到。',
+'導演：這部電影拍攝得順利嗎？／製片：一直出狀況，演員受傷、經費斷掉、天氣又不好，好不容易才拍完。',
+'朋友：你們終於結婚了！／新娘：你不知道，這條路走得多曲折，分手兩次、家人反對、他又失業，我們差點就放棄。'],
+'說三道四': [
+'阿姨：隔壁那家的女兒，聽說離婚了？／媽媽：別在背後亂議論別人的家務事。',
+'小萱：我辭職以後，同事們一直在背後評論我。／朋友：不要理他們，隨便批評別人是他們的習慣。',
+'老師：下課後你們在走廊那邊討論什麼？／學生：討論新同學穿什麼、家裡做什麼，大家一直對別人評頭論足。'],
+'七手八腳': [
+'村民：河邊起火了！／鄰居：大家一起衝過去，每個人都搶著幫忙，有人拿桶子、有人拉水管，場面亂哄哄的。',
+'小琪：搬家那天誰來幫忙？／小萱：朋友們一窩蜂來，七八個人一起搬，雖然有點亂，但是很快就搬完了。',
+'學姊：生日蛋糕做好了嗎？／學弟：大家都想幫忙，你一手我一手，擠在廚房裡，一下子就打翻了奶油。'],
+'百發百中': [
+'教練：他的投籃命中率怎麼樣？／隊友：每一球都進，從來沒有失手過。',
+'觀眾：那位射箭選手上場了！／解說員：他每一箭都正中靶心，今天一箭都沒有射偏。',
+'小明：你玩射擊遊戲怎麼這麼厲害？／阿志：我練了三年，每次瞄準、扣下扳機，都會打中目標。'],
+'五彩繽紛': [
+'遊客：這座花園春天真漂亮！／園丁：紅的、黃的、紫的花同時盛開，顏色鮮豔得像一幅畫。',
+'孩子：媽媽，天空的煙火好漂亮！／媽媽：對啊，各種亮麗的色彩在夜空裡一閃一閃的。',
+'設計師：這場秀的服裝怎麼樣？／模特兒：每一套衣服都色彩明亮鮮豔，在舞台燈光下特別好看。'],
+'九死一生': [
+'記者：您當時怎麼脫險的？／倖存者：船沉到一半，我抓著浮木漂了兩天，幾乎沒有活下來的機會。',
+'護理師：他的手術成功了，真是奇蹟。／醫生：車禍時傷得那麼重，他能活下來真是命大。',
+'登山客：我們在暴風雪裡迷路了三天。／朋友：你能回來真幸運，當時生存的機會很小。'],
+'一生一世': [
+'新郎：我會一直愛你。／新娘：你保證要陪我到老，整個人生都不分開嗎？／新郎：我保證，一輩子都在你身邊。',
+'孫子：爺爺，奶奶是你唯一的愛人嗎？／爺爺：是的，我跟她約好，這輩子永遠在一起。',
+'小女孩：你會永遠當我的朋友嗎？／好朋友：會，一輩子都是。'],
+'丟三落四': [
+'媽媽：你今天又怎麼了？／兒子：我的水壺、外套、悠遊卡都忘在學校了。',
+'同事：你又回來拿手機了？／小宇：對，我出門總是忘東忘西，今天早上連鑰匙也沒帶。',
+'老師：這個月你已經第三次忘記帶作業了。／學生：對不起，我常常記不住要帶的東西。'],
+'萬眾一心': [
+'市長：颱風過後，各位市民都挺身而出清理街道。／記者：全城的人團結一致，沒有人偷懶。',
+'校長：決賽那天，全校師生都到場為球隊加油。／學生：大家心意相同，只有一個目標：贏。',
+'隊長：這次災後重建，志工、居民、廠商全都團結成一個整體。／副隊長：沒有人置身事外。'],
+'三長兩短': [
+'媽媽：你一個人去環島，萬一出事怎麼辦？／兒子：我會小心的。／媽媽：我就是怕你萬一遇到不幸，我們沒辦法承受。',
+'鄰居：老先生一個人住在山上，沒人照顧。／里長：就怕他萬一發生不測，都沒人知道。',
+'太太：他今天去爬山，到現在還沒回來。／朋友：電話又打不通，我真擔心他出了什麼意外。'],
+'萬無一失': [
+'主任：明天的活動準備好了嗎？／助理：流程我檢查了三遍，道具也確認過了，不會出任何差錯。',
+'太太：護照、機票、簽證都帶了嗎？／先生：我昨天晚上和今天早上各檢查一次，絕對沒問題。',
+'工程師：這座橋的安全測試通過了嗎？／主管：每個環節都反覆驗證過，有十足的把握不會出事。'],
+'千篇一律': [
+'觀眾：這幾部偶像劇我看不下去。／朋友：劇情都一樣，男女主角吵架、和好、結婚，只是換個名字，一點新意都沒有。',
+'老師：這次作文怎麼批改起來這麼無聊？／助教：每個人的開頭和結尾都是同一套公式，內容也沒有個人特色。',
+'遊客：這條老街的商店賣的東西好像都一樣？／朋友：對，每家都是同樣的紀念品，設計也沒有什麼不同。'],
+'一成不變': [
+'小豪：你退休後的日子怎麼樣？／老爸：每天六點起床，七點散步，八點吃稀飯，十年都沒有改變。',
+'年輕人：我不想過每天都一樣的日子。／朋友：所以你才辭職去旅行？／年輕人：對，我受不了每天重複同樣的生活。',
+'老闆：這家店為什麼生意變差了？／顧問：菜單十年沒更新過，裝潢也從來沒改，客人當然會膩。'],
+'火冒三丈': [
+'老師：你怎麼了？臉那麼紅。／學生：我被朋友騙走三千塊，一想到就怒氣沖沖，氣得想大聲罵人。',
+'店員：客人大吼大叫，把桌子拍得砰砰響。／經理：他怎麼生氣成這樣？／店員：他的餐點等了一個小時還沒送來，怒氣一下子衝上來。',
+'太太：你怎麼摔門就走？／先生：我發現車子被人刮了一條長長的痕，氣得不得了。'],
+'五十步笑百步': [
+'小李：你看他考五十八分，真遜！／小王：你自己才六十分，也沒好到哪裡去，還好意思笑他。',
+'同事：他上班老是遲到，真沒責任感。／主管：你上星期也遲到三次，自己有同樣的毛病，還笑別人。',
+'姊姊：你的房間好亂！／妹妹：你的桌子也一團糟，你憑什麼取笑我？'],
+'十年寒窗': [
+'記者：您考上律師，有什麼感想？／他：這些年我每天只睡四小時，在小房間裡苦讀，今天終於有成果。',
+'媽媽：他今天終於博士畢業了。／爸爸：長年苦讀，無數個冬夜都在圖書館度過，這一天來得不容易。',
+'學生：古代的讀書人為了科舉，要準備多久？／老師：很多人從小苦讀到老，年復一年在燈下讀書，就為了一次機會。'],
+'百口莫辯': [
+'警察：你的指紋在現場，監視器也拍到你。／嫌疑人：我真的沒偷東西，可是證據都對我不利，我怎麼解釋都沒有人相信。',
+'同事：老闆認為是你把文件外洩的。／小蔡：我是被冤枉的，但所有紀錄都指向我，怎麼說都說不清。',
+'媽媽：窗戶是你打破的吧？球還在你手上，鄰居也看到了。／孩子：不是我！可是我怎麼講你們都不相信！'],
+'百思不解': [
+'小張：這道題目的答案明明是A，為什麼老師說是B？／小林：我也想了半天，怎麼想都想不通。',
+'警察：門鎖著，窗戶也從裡面關上，犯人到底是怎麼進來的？／同事：我想了一整晚還是搞不懂。',
+'媽媽：他明明很愛吃甜點，怎麼突然拒絕了？／爸爸：我反覆思考，實在想不出原因。'],
+'千言萬語': [
+'同學：畢業典禮上，你不是準備了好多話要對老師說嗎？／學生：想說的話太多了，可是一看到老師，卻一句也說不出來。',
+'哥哥：你終於見到媽媽了。／妹妹：我想說的話實在多得說不完，可是現在只想抱著她。',
+'太太：臨走前你想對孩子說什麼？／先生：心裡有好多話想交代，不知道從哪裡開始說。'],
+'千辛萬苦': [
+'記者：你們是怎麼走到這裡的？／難民：我們翻過三座山，渴了喝露水，餓了吃野菜，受盡各種困難才抵達。',
+'客人：貴公司能撐到今天，真不簡單。／創辦人：這些年借錢、被騙、差點倒閉，什麼苦我們都吃過了。',
+'媽媽：這隻小狗是怎麼找到的？／爸爸：我們找了整整三個月，跑遍好幾個城市，吃了很多苦才找回牠。'],
+'九牛一毛': [
+'小莉：你捐了一萬元，會不會太多？／富豪：對我的財產來說，只是很小很小的一部分，沒什麼感覺。',
+'老師：這次地震的救助預算有幾億，但需要的錢更多。／同學：目前的補助金額，跟全部的損失比起來，只是微不足道。',
+'朋友：你一個月賺這麼多，買杯咖啡還要考慮？／同事：那點錢對我的薪水來說，根本算不了什麼。'],
+'一舉兩得': [
+'同事：你騎腳踏車上班？／小傑：對，省了油錢，還順便運動，一次得到兩種好處。',
+'朋友：你週末去花蓮做什麼？／小潔：出差去談生意，順便看了很久沒見的老同學。',
+'媽媽：你在寫作業時聽英文廣播？／女兒：這樣作業寫完了，聽力也練到了，兩邊都沒耽誤。'],
+'一刀兩斷': [
+'小倩：你還跟前男友聯絡嗎？／小蓉：我把他所有聯絡方式都刪了，從此再也沒有任何關係。',
+'爸爸：你跟那些壞朋友還有往來嗎？／兒子：我已經決定徹底斷絕關係，不再見面。',
+'老闆：你跟那個詐騙集團還有合作嗎？／經理：我立刻切斷了所有往來，今後完全不聯絡。'],
+'一毛不拔': [
+'朋友：這次同學會，老張又不肯出錢嗎？／同學：他明明很有錢，卻連十塊錢都捨不得花。',
+'募款人：這位富翁怎麼一毛錢都沒捐？／助理：他從來不肯為別人花錢，大家都叫他鐵公雞。',
+'太太：他請客了嗎？／先生：不但沒請，連分攤飲料錢都推三阻四，真吝嗇。'],
+'亂七八糟': [
+'媽媽：你的房間是怎麼回事？／兒子：衣服堆在床上，書散在地板，什麼都找不到。',
+'老師：你的筆記為什麼這麼難看懂？／學生：我當時趕時間，東寫一點、西寫一點，毫無條理。',
+'鄰居：颱風過後，你們的院子現在怎麼樣？／屋主：樹枝、落葉、垃圾桶倒得到處都是，一團混亂。'],
+'五顏六色': [
+'孩子：這些積木好好玩！／媽媽：我買了紅色、藍色、黃色、綠色的，顏色很多。',
+'遊客：市集的攤位好熱鬧！／攤販：燈籠、布料、水果都有各種不同的顏色，看得人眼睛都花了。',
+'老師：這幅畫用了哪些顏色？／學生：我把所有顏料都用上了，紅橙黃綠藍紫混在一起。'],
+'六親不認': [
+'叔叔：聽說小李有錢以後都不理我們了？／阿姨：連親弟弟向他借錢，都被趕出門，完全不顧親情。',
+'民眾：那位法官判案時，連自己的表弟來說情都不給面子。／記者：他不講人情，完全依法辦事。',
+'媽媽：他怎麼突然和親戚全斷了往來？／姑姑：他當上老闆以後，誰都不理，連過年也不回家。']
+};
+
+function pickDlg(x) {
+  const a = DLG[x.w], k = i => 'D:' + x.w + '#' + i;
+  const c = a.map((t, i) => ({ t, i, n: SEEN[k(i)] || 0 }));
+  const min = Math.min.apply(null, c.map(o => o.n));
+  const best = c.filter(o => o.n === min);
+  const o = best[Math.floor(Math.random() * best.length)];
+  SEEN[k(o.i)] = o.n + 1;
+  try { localStorage.setItem('cy_seen', JSON.stringify(SEEN)); } catch (e) {}
+  return o.t;
+}
+const dlgHtml = t => '<div class="dlg">' + t.split('／').map(l => { const j = l.indexOf('：'); return '<p class="line"><b class="who">' + l.slice(0, j) + '</b><span>' + l.slice(j + 1) + '</span></p>'; }).join('') + '</div>';
+
 const NUM = /[一二三四五六七八九十百千萬兩半]/g;
 const fm = w => w.replace(NUM, c => '<b class="n">' + c + '</b>');
 const fill = (s, w) => s.replace('{}', '<mark>' + fm(w) + '</mark>');
@@ -306,7 +587,105 @@ const pyTog = document.getElementById('pytog');
 let mode = 'meaning', showPy = true, S = null, P = null;
 const N = 10;
 
-pyTog.addEventListener('change', () => { showPy = pyTog.checked; if (S && S.kind === 'meaning' && !S.done) renderQuestion(S.answered); });
+/* ---- Which chengyu are available, and fair selection ---- */
+let OFF = new Set(), TESTED = {};
+try { OFF = new Set(JSON.parse(localStorage.getItem('cy_off') || '[]')); } catch (e) { OFF = new Set(); }
+try { TESTED = JSON.parse(localStorage.getItem('cy_tested') || '{}'); } catch (e) { TESTED = {}; }
+const saveOff = () => { try { localStorage.setItem('cy_off', JSON.stringify(Array.from(OFF))); } catch (e) {} };
+const saveTested = () => { try { localStorage.setItem('cy_tested', JSON.stringify(TESTED)); } catch (e) {} };
+const isOn = w => !OFF.has(w);
+const cnt = w => TESTED[w] || 0;
+const enabled = () => D.filter(x => isOn(x.w));
+function bump(w) { TESTED[w] = cnt(w) + 1; saveTested(); }
+/* Fewest-tested first; the shuffle before the stable sort breaks ties at random. */
+function chooseItems(n, skip) {
+  const ex = new Set((skip || []).map(x => x.w));
+  return shuffle(enabled().filter(x => !ex.has(x.w))).sort((a, b) => cnt(a.w) - cnt(b.w)).slice(0, n);
+}
+/* Paste rounds avoid two idioms from the same confusable group when possible. */
+function choosePaste() {
+  const sorted = shuffle(enabled()).sort((a, b) => cnt(a.w) - cnt(b.w));
+  const used = new Set(), picks = [];
+  for (const it of sorted) { if (!used.has(it.g)) { used.add(it.g); picks.push(it); } if (picks.length === 6) break; }
+  for (const it of sorted) { if (picks.length >= 6) break; if (picks.indexOf(it) < 0) picks.push(it); }
+  return picks;
+}
+function renderEmpty() {
+  setProgress(0, 0, '沒有可測驗的成語');
+  stage.innerHTML = '<section class="card"><p class="kicker">目前沒有勾選任何成語</p><p>請打開「可測驗成語」選單，至少勾選一個成語。</p></section>' +
+    '<button class="primary" data-act="openmenu">打開可測驗成語選單</button>';
+}
+
+/* ---- Menu ---- */
+const menuEl = document.getElementById('menu'), menuBtn = document.getElementById('menubtn');
+const listEl = document.getElementById('cklist'), pbody = document.getElementById('pbody'), wrapEl = document.querySelector('.wrap');
+let menuChanged = false, resetTimer = null;
+function updateBadge() {
+  document.getElementById('menucount').textContent = enabled().length + '/' + D.length;
+  document.getElementById('msum').textContent = '已打勾 ' + enabled().length + ' / ' + D.length + '　已練習過 ' + D.filter(x => cnt(x.w) > 0).length + ' 個';
+}
+function renderMenu() {
+  listEl.innerHTML = D.map(x =>
+    '<label class="ck' + (isOn(x.w) ? ' on' : '') + '"><input type="checkbox" data-w="' + x.w + '"' + (isOn(x.w) ? ' checked' : '') + '>' +
+    '<span class="ckb"><span class="ckw">' + fm(x.w) + '</span><span class="ckp">' + (cnt(x.w) ? '已練 ' + cnt(x.w) + ' 次' : '尚未練習') + '</span></span></label>').join('');
+  updateBadge();
+}
+function syncChecks() {
+  listEl.querySelectorAll('input').forEach(i => { i.checked = isOn(i.dataset.w); i.parentElement.classList.toggle('on', i.checked); });
+  updateBadge();
+}
+function openMenu() {
+  renderMenu(); menuChanged = false;
+  menuEl.hidden = false; wrapEl.inert = true; document.body.style.overflow = 'hidden';
+  document.getElementById('menuclose').focus();
+}
+function closeMenu() {
+  if (menuEl.hidden) return;
+  menuEl.hidden = true; wrapEl.inert = false; document.body.style.overflow = '';
+  clearTimeout(resetTimer); document.getElementById('mreset').textContent = '重設練習次數';
+  menuBtn.focus();
+  if (menuChanged) { menuChanged = false; applySelectionChange(); }
+}
+function applySelectionChange() {
+  updateBadge();
+  if (!enabled().length) { S = null; P = { total: P ? P.total : 0, right: P ? P.right : 0 }; renderEmpty(); return; }
+  if (mode === 'paste') {
+    if (!P || !P.items) { newRound(); return; }
+    if (!P.checked && P.items.some(x => !isOn(x.w))) newRound();
+    return;
+  }
+  if (!S) { startSession(mode); return; }
+  if (S.done) return;
+  const keep = S.items.filter((x, j) => j < S.i || (j === S.i && S.answered) || isOn(x.w));
+  if (keep.length === S.items.length) return;
+  const curRemoved = !(S.answered || isOn(S.items[S.i].w));
+  const fresh = chooseItems(S.items.length - keep.length, keep);
+  S.items = keep.concat(fresh);
+  if (S.i >= S.items.length) { showResult(); return; }
+  if (curRemoved) renderQuestion(false);
+  else setProgress(S.i, S.items.length, '第 ' + (S.i + 1) + ' 題 / 共 ' + S.items.length + ' 題');
+}
+menuBtn.addEventListener('click', openMenu);
+document.getElementById('menuclose').addEventListener('click', closeMenu);
+document.getElementById('mdone').addEventListener('click', closeMenu);
+menuEl.addEventListener('click', e => { if (e.target === menuEl) closeMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+listEl.addEventListener('change', e => {
+  const i = e.target.closest('input'); if (!i) return;
+  if (i.checked) OFF.delete(i.dataset.w); else OFF.add(i.dataset.w);
+  saveOff(); menuChanged = true;
+  i.parentElement.classList.toggle('on', i.checked); updateBadge();
+});
+document.getElementById('mall').addEventListener('click', () => { OFF.clear(); saveOff(); menuChanged = true; syncChecks(); });
+document.getElementById('mnone').addEventListener('click', () => { D.forEach(x => OFF.add(x.w)); saveOff(); menuChanged = true; syncChecks(); });
+document.getElementById('mreset').addEventListener('click', e => {
+  const b = e.currentTarget;
+  if (!resetTimer) { b.textContent = '確定重設？再按一次'; resetTimer = setTimeout(() => { resetTimer = null; b.textContent = '重設練習次數'; }, 3000); return; }
+  clearTimeout(resetTimer); resetTimer = null; b.textContent = '重設練習次數';
+  TESTED = {}; saveTested(); const top = pbody.scrollTop; renderMenu(); pbody.scrollTop = top;
+});
+
+pyTog.addEventListener('change', () => { showPy = pyTog.checked; if (S && S.kind === 'meaning' && !S.done) renderQuestion(true); });
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
 
 function setMode(m) {
@@ -316,7 +695,8 @@ function setMode(m) {
 }
 
 function startSession(m, pool) {
-  const items = shuffle(pool && pool.length ? pool : sample(D, N));
+  const items = shuffle(pool && pool.length ? pool : chooseItems(N));
+  if (!items.length) { S = null; renderEmpty(); return; }
   S = { kind: m, items, i: 0, right: 0, miss: [], answered: false, done: false, opts: [] };
   renderQuestion(false);
 }
@@ -330,7 +710,7 @@ function renderQuestion(keepAnswered) {
   const it = S.items[S.i];
   if (!keepAnswered) {
     S.answered = false;
-    it.cur = pick(it);
+    it.cur = S.kind === 'dialog' ? { dlg: pickDlg(it) } : pick(it);
     if (S.kind === 'meaning') S.opts = shuffle([{ t: it.m, c: true, w: it.w }].concat(it.d.map(w => ({ t: BY[w].m, c: false, w: w }))));
     else S.opts = shuffle([it.w].concat(it.d)).map(w => ({ t: w, c: w === it.w, w: w }));
   }
@@ -339,14 +719,16 @@ function renderQuestion(keepAnswered) {
   if (S.kind === 'meaning') {
     head = '<section class="card"><p class="kicker">這個成語的意思是？</p><h2 class="idiom">' + fm(it.w) + '</h2>' +
       (showPy ? '<p class="py">' + it.p + '</p>' : '') + '</section>';
+  } else if (S.kind === 'dialog') {
+    head = '<section class="card"><p class="kicker">聽完（讀完）這段對話，哪一個成語最符合他們說的情況？</p>' + dlgHtml(it.cur.dlg) + '</section>';
   } else {
     head = '<section class="card"><p class="kicker">選出最適合填入空格的成語</p><p class="sent">' +
       it.cur.text.replace('{}', '<span class="gap"></span>') + '</p></section>';
   }
-  const two = S.kind === 'usage' ? ' two' : '';
+  const two = S.kind !== 'meaning' ? ' two' : '';
   const opts = S.opts.map((o, k) =>
     '<button class="opt" data-act="opt" data-v="' + k + '"><span class="k">' + 'ABCD'[k] + '</span><span>' +
-    (S.kind === 'usage' ? fm(o.t) : o.t) + '</span></button>').join('');
+    (S.kind !== 'meaning' ? fm(o.t) : o.t) + '</span></button>').join('');
   stage.innerHTML = head + '<div class="opts' + two + '" id="opts">' + opts + '</div><div id="fb"></div>';
   if (keepAnswered && S.answered) markAnswer(S.pick);
 }
@@ -369,8 +751,9 @@ function markAnswer(k) {
   document.getElementById('fb').innerHTML =
     '<section class="card fb ' + (ok ? 'good' : 'miss') + '"><p class="verdict">' + (ok ? '答對了' : '答錯了') + '</p>' +
     '<p class="big">' + fm(it.w) + ' <span class="py">' + it.p + '</span></p><p>' + it.m + '</p>' + picked +
-    '<p class="why">' + it.why + '</p><p class="ex">' + fill(it.cur.text, it.w) + '<br><span class="src">來源：' + SRC[it.cur.src] + '</span></p>' +
-    (function () { const o = other(it, it.cur); return '<p class="ex2">另一個例句：' + fill(o.text, it.w) + '<br><span class="src">來源：' + SRC[o.src] + '</span></p>'; })() + '</section>' +
+    '<p class="why">' + it.why + '</p>' + (S.kind === 'dialog' ? '<p class="src">對話來源：Claude 編寫（非考試原題）</p>' :
+    '<p class="ex">' + fill(it.cur.text, it.w) + '<br><span class="src">來源：' + SRC[it.cur.src] + '</span></p>' +
+    (function () { const o = other(it, it.cur); return '<p class="ex2">另一個例句：' + fill(o.text, it.w) + '<br><span class="src">來源：' + SRC[o.src] + '</span></p>'; })()) + '</section>' +
     '<button class="primary" data-act="next">' + (last ? '看結果' : '下一題') + '</button>';
   document.getElementById('fb').scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 }
@@ -380,6 +763,7 @@ function answerOpt(k) {
   S.answered = true; S.pick = k;
   const it = S.items[S.i];
   if (S.opts[k].c) S.right++; else S.miss.push(it);
+  bump(it.w); updateBadge();
   markAnswer(k);
 }
 
@@ -404,20 +788,17 @@ function showResult() {
 
 /* ---- Mode 3: paste words into blanks ---- */
 function newRound() {
-  const used = new Set(), picks = [];
-  for (const it of shuffle(D)) {
-    if (!used.has(it.g)) { used.add(it.g); picks.push(it); }
-    if (picks.length === 6) break;
-  }
+  const picks = choosePaste();
+  if (!picks.length) { P = { total: P.total, right: P.right }; renderEmpty(); return; }
   const items = shuffle(picks);
   items.forEach(x => { x.cur = pick(x); });
-  P = { total: P.total, right: P.right, items, bank: shuffle(picks.map(x => x.w)), slots: Array(6).fill(null), sel: null, slotSel: null, checked: false };
+  P = { total: P.total, right: P.right, items, bank: shuffle(picks.map(x => x.w)), slots: Array(items.length).fill(null), sel: null, slotSel: null, checked: false };
   renderPaste();
   window.scrollTo(0, 0);
 }
 
 function renderPaste() {
-  setProgress(P.slots.filter(Boolean).length, 6, '已填 ' + P.slots.filter(Boolean).length + ' / 6');
+  setProgress(P.slots.filter(Boolean).length, P.items.length, '已填 ' + P.slots.filter(Boolean).length + ' / ' + P.items.length);
   const sents = P.items.map((it, i) => {
     const w = P.slots[i];
     const cls = 'slot' + (w ? ' filled' : '') + (P.slotSel === i ? ' active' : '') + (P.checked ? (w === it.w ? ' ok' : ' bad') : '');
@@ -439,7 +820,7 @@ function renderPaste() {
     tray = '<div class="tray"><div class="chips">' + chips + '</div><button class="primary" data-act="check"' + (P.slots.every(Boolean) ? '' : ' disabled') + '>檢查答案</button></div>';
   } else {
     const r = P.slots.filter((w, i) => w === P.items[i].w).length;
-    tray = '<div class="tray"><p class="total">本回 ' + r + ' / 6　累計 ' + P.right + ' / ' + P.total + '</p><button class="primary" data-act="newround">下一回合</button></div>';
+    tray = '<div class="tray"><p class="total">本回 ' + r + ' / ' + P.items.length + '　累計 ' + P.right + ' / ' + P.total + '</p><button class="primary" data-act="newround">下一回合</button></div>';
   }
   stage.innerHTML = '<p class="hint">點下方的成語，再點句子裡的空格。點已填的空格可以取消。</p><section class="card">' + sents + '</section>' + tray;
 }
@@ -464,7 +845,9 @@ function tapSlot(i) {
 function checkRound() {
   if (!P.slots.every(Boolean)) return;
   P.checked = true;
-  P.total += 6;
+  P.total += P.items.length;
+  P.items.forEach(x => bump(x.w));
+  updateBadge();
   P.right += P.slots.filter((w, i) => w === P.items[i].w).length;
   renderPaste();
 }
@@ -481,8 +864,10 @@ stage.addEventListener('click', e => {
   else if (a === 'slot') tapSlot(+v);
   else if (a === 'check') checkRound();
   else if (a === 'newround') newRound();
+  else if (a === 'openmenu') openMenu();
 });
 
+updateBadge();
 setMode('meaning');
 </script>
 </body>
